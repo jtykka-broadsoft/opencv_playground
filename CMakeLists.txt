@@ -26,6 +26,6 @@ MESSAGE( ${OpenCV_LIBS} )
 
 
 
-add_executable(camera main.cpp)
+add_executable(camera main.cpp handGesture.cpp roi.cpp myImage.cpp)
 QT5_USE_MODULES(camera ${QT_COMPONENT_LIST})
 target_link_libraries(camera opencv_imgcodecs ${OpenCV_LIBS})
