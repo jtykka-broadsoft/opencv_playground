@@ -1,4 +1,4 @@
-/**
+dsds/**
  * @file bg_sub.cpp
  * @brief Background subtraction tutorial sample code
  * @author Domenico D. Bloisi
@@ -10,6 +10,8 @@
 #include "opencv2/videoio.hpp"
 #include <opencv2/highgui.hpp>
 #include <opencv2/video.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
+
 //C
 #include <stdio.h>
 //C++
@@ -54,6 +56,12 @@ void processVideo()
         exit(EXIT_FAILURE);
     }
 
+    cv::CascadeClassifier cascade;
+	if (cascade.load("/Users/jani/work/oma_opencv/opencv_playground/haar/fist.xml") == false) {
+		printf("cascade.load() failed...\n");
+		return;
+	}
+
     //read input data. ESC or 'q' for quitting
     while( (char)keyboard != 'q' && (char)keyboard != 27 )
     {
@@ -66,7 +74,7 @@ void processVideo()
 			continue;
         }
 
-        //update the background model
+       //update the background model
         pMOG2->apply(frame, fgMaskMOG2);
         //get the frame number and write it on the current frame
         stringstream ss;
@@ -84,9 +92,46 @@ void processVideo()
 		GaussianBlur(fgMaskMOG2, fgMaskMOG2, Size(7,7), 1.5, 1.5);
         Canny(fgMaskMOG2, fgMaskMOG2, 0, 30, 3);
 
+
+
+
+{
+
+
+        std::vector<cv::Rect> faces;
+	cascade.detectMultiScale(
+		frame,
+		faces,
+		1.1,          // scale factor
+		3,            // minimum neighbors
+		0,            // flags
+		cv::Size(20, 20) // minimum size
+		);
+
+	std::vector<cv::Rect>::const_iterator i;
+	for (i = faces.begin(); i != faces.end(); ++i) {
+		cv::rectangle(
+			frame,
+			cv::Point(i->x, i->y),
+			cv::Point(i->x + i->width, i->y + i->height),
+			CV_RGB(255, 0, 0),
+			2);
+	}
+}
+
+
+
+
+
+
+
         imshow("Frame", frame );
         imshow("FG Mask MOG 2", fgMaskMOG2);
 
+
+
+
+/*
         vector<vector<Point> > contours;
 		vector<Vec4i> hierarchy;
 		RNG rng(12345);
@@ -129,6 +174,8 @@ void processVideo()
 		  /// Show in a window
 		  namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
 		  imshow( "Contours", drawing );*/
+
+
 
 
         //get the input from the keyboard
